@@ -1,0 +1,20 @@
+services:
+  nginx:
+    image: nginx
+    ports:
+      - 85:80
+    volumes:
+      - /home/adm1/PhpstormProjects/docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /home/adm1/PhpstormProjects:/var/www/html
+  php-fpm:
+    build: ./docker/php/
+ #   volumes:
+ #     - .:/var/www/html
+  postgres_db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=${USER}
+      - POSTGRES_PASSWORD=${pass}
+      - POSTGRES_DB=${mydb}
+    ports:
+      - 54322:5432
