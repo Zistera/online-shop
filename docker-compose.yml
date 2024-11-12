@@ -11,10 +11,10 @@ services:
  #   volumes:
  #     - .:/var/www/html
   postgres_db:
-    image: postgres:13
+    image: postgres:13.1
     environment:
-      - POSTGRES_USER=${USER}
-      - POSTGRES_PASSWORD=${pass}
-      - POSTGRES_DB=${mydb}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - 54322:5432
