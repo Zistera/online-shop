@@ -4,45 +4,63 @@ $email = $_POST["email"];
 $password = $_POST['password'];
 $PasRep = $_POST['password-repeat'];
 $err = [];
-if (empty($name)) {
-    $err[] = 'имя не может быть пустым';
-} elseif (strlen($name)<2 || strlen($name)>20) {
-    $err[] = 'имя не может иметь меньше 2 символов или больше 20';
-} elseif (is_numeric($name)) {
-    $err[] = 'имя не может быть числом';
-} elseif (strpos($name, " ") !== false){
-    $err[] = 'в имени не может быть пробел';
+if (isset($name)) {
+    $name = $_POST["name"];
+    if (empty($name)) {
+    $err["name"] = 'имя не может быть пустым';
+    } elseif (strlen($name)<2 || strlen($name)>20) {
+    $err["name"] = 'имя не может иметь меньше 2 символов или больше 20';
+    } elseif (is_numeric($name)) {
+    $err["name"] = 'имя не может быть числом';
+    } elseif (strpos($name, " ") !== false){
+    $err["name"] = 'в имени не может быть пробел';
 }
-if (empty($email)) {
-    $err[] = 'email не может быть пустым';
-} elseif (strpos($email, "@") === true){
-    $err[] = 'в email должен быть знак @';
+} else {
+   $err ["name"] = "поле 'Name' должно быть заполнено";
 }
-if (empty($password)) {
-    $err[] = 'пароль не может быть пустым';
-} elseif (strlen($password)<2 || strlen($password)>20) {
-    $err[] = 'пароль не может иметь меньше 2 символов или больше 20';
-} elseif (is_numeric($password)) {
-    $err[] = 'пароль не может быть числом';
-} elseif (strpos($password, " ") !== false) {
-    $err[] = 'пароль не может содержать пробел';
+if (isset($email)) {
+    if (empty($email)) {
+        $err["email"] = 'email не может быть пустым';
+    } elseif (strpos($email, "@") === false){
+        $err["email"] = 'в email должен быть знак @';
+    } elseif (strlen($email)<2 || strlen($email)>20) {
+    $err["email"] = 'email не может иметь меньше 2 символов или больше 20';
+} }else {
+    $err ["email"] = "поле 'email' должно быть заполнено";
 }
-if (empty($PasRep)) {
-    $err[] = 'пароль не может быть пустым';
-} elseif ($PasRep !== $password) {
-    $err[] = 'пароли должны совпадать';
-}
-if (!empty($err)) {
-    foreach ($err as $e) {
-        echo $e . "\n";
+if (isset($password)) {
+    if (empty($password)) {
+        $err['password'] = 'пароль не может быть пустым';
+    } elseif (strlen($password)<2 || strlen($password)>20) {
+        $err['password'] = 'пароль не может иметь меньше 2 символов или больше 20';
+    } elseif (is_numeric($password)) {
+        $err['password'] = 'пароль не может быть числом';
+    } elseif (strpos($password, " ") !== false) {
+        $err['password'] = 'пароль не может содержать пробел';
     }
-    exit;
+} else {
+    $err ['password'] = "поле 'password' должно быть заполнено";
 }
-$pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
-$stmt = $pdo -> prepare("INSERT INTO users(name, email, password) VALUES (:name, :email, :password)");
-$hash = password_hash($password, PASSWORD_DEFAULT);
-$stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
-$stmt = $pdo -> prepare("SELECT * FROM users WHERE email = :email");
-$stmt->execute(['email' => $email]);
+if (isset($PasRep)) {
+    if (empty($PasRep)) {
+        $err['password-repeat'] = 'пароль не может быть пустым';
+    } elseif ($PasRep !== $password) {
+        $err['password-repeat'] = 'пароли должны совпадать';
+    }
+} else {
+    $err ['password-repeat'] = "поле 'Repeat Password' должно быть заполнено";
+}
 
-print_r($stmt->fetch());
+if (empty($err)) {
+    $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
+    $stmt = $pdo->prepare("INSERT INTO users(name, email, password) VALUES (:name, :email, :password)");
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt->execute(['email' => $email]);
+
+    print_r($stmt->fetch());
+} else {
+    require_once './get_registration.php';
+}
+?>
