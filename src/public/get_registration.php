@@ -6,26 +6,26 @@
 
         <label for="name"><b>Name</b></label>
         <label style="color: red">
-            <?php if (!empty($err["name"])){
-                print_r($err["name"]);} ?> </label>
+            <?php if (!empty($errors["name"])){
+                print_r($errors["name"]);} ?> </label>
         <input type="text" placeholder="Enter Name" name="name" id="name" required>
 
         <label for="email"><b>Email</b></label>
         <label style="color: red">
-            <?php if (!empty($err["email"])){
-                print_r($err["email"]);} ?> </label>
+            <?php if (!empty($errors["email"])){
+                print_r($errors["email"]);} ?> </label>
         <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
         <label for="psw"><b>Password</b></label>
         <label style="color: red">
-            <?php if (!empty($err["password"])){
-                print_r($err["password"]);} ?> </label>
+            <?php if (!empty($errors["password"])){
+                print_r($errors["password"]);} ?> </label>
         <input type="password" placeholder="Enter Password" name="password" id="psw" required>
 
         <label for="psw-repeat"><b>Repeat Password</b></label>
         <label style="color: red">
-            <?php if (!empty($err["password-repeat"])){
-                print_r($err["password-repeat"]);} ?> </label>
+            <?php if (!empty($errors["password-repeat"])){
+                print_r($errors["password-repeat"]);} ?> </label>
         <input type="password" placeholder="Repeat Password" name="password-repeat" id="psw-repeat" required>
         <hr>
 
@@ -44,6 +44,11 @@
     /* Add padding to containers */
     .container {
         padding: 16px;
+        background-image: url("white.jpg");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-attachment: fixed;
     }
 
     /* Full-width input fields */

@@ -7,16 +7,16 @@
             <h1>Login</h1>
             <div class="input-box">
                 <label style="color: red">
-                    <?php if (!empty($err["email"])){
-                        print_r($err["email"]);} ?>
+                    <?php if (!empty($errors["email"])){
+                        print_r($errors["email"]);} ?>
                 </label>
                 <input type="text" placeholder="Email" name="email" id="email" required>
                 <i class='bx bxs-user'></i>
             </div>
             <dive class="input-box">
                 <label style="color: red">
-                    <?php if (!empty($err["password"])){
-                        print_r($err["password"]);} ?>
+                    <?php if (!empty($errors["password"])){
+                        print_r($errors["password"]);} ?>
                 </label>
                 <input type="password" placeholder="Password" name="password" id="password" required>
                 <i class='bx bxs-lock-alt'></i>
@@ -36,12 +36,6 @@
 </body>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Poppins", sans-serif;
-    }
     body {
         font-family: Times New R, sans-serif;
         background-color: #2c2c36;
@@ -56,12 +50,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 90%;
-        height: 600px;
-        border-radius: 10px;
-        background: url(https://i.pinimg.com/564x/b1/8d/bd/b18dbdce168f718f69decc100604b376.jpg);
+        width: calc(100%);
+        height: calc(100%);
+        background-image: url("street.jpg");
         background-repeat: no-repeat;
+        background-position: center center;
         background-size: cover;
+        background-attachment: fixed;
     }
 
     .wrapper {
@@ -115,7 +110,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, .1);
         cursor: pointer;
         font-size: 16px;
-        color: #333;
+        color: blue;
         font-weight: 600;
     }
     .wrapper .btn:hover{
