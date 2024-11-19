@@ -52,7 +52,7 @@
         justify-content: center;
         width: calc(100%);
         height: calc(100%);
-        background-image: url("street.jpg");
+        background-image: url("images/street.jpg");
         background-repeat: no-repeat;
         background-position: center center;
         background-size: cover;

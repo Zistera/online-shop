@@ -1,5 +1,5 @@
 <?php
-function validations(array $arr): array
+function validate(array $arr): array
 {
     $errors = [];
     if (isset($arr["name"])) {
@@ -16,21 +16,14 @@ function validations(array $arr): array
     } else {
         $errors ["name"] = "поле 'Name' должно быть заполнено";
     }
+
     if (isset($arr["email"])) {
-        $email = $arr["email"];
-        $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->execute(['email' => $email]);
-        $userdata = $stmt->fetch();
-        $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
         if (empty($email)) {
             $errors["email"] = 'email не может быть пустым';
         } elseif (strpos($email, "@") === false){
             $errors["email"] = 'в email должен быть знак @';
         } elseif (strlen($email)<2 || strlen($email)>20) {
             $errors["email"] = 'email не может иметь меньше 2 символов или больше 20';
-        } elseif ($userdata !== false){
-            $errors["email"] = 'такой email уже зарегистрирован';
         }
     }else {
         $errors ["email"] = "поле 'email' должно быть заполнено";
@@ -49,6 +42,7 @@ function validations(array $arr): array
     } else {
         $errors ['password'] = "поле 'password' должно быть заполнено";
     }
+
     if (isset($arr['password-repeat'])) {
         $PasswordRepeat = $arr["password-repeat"];
         if (empty($PasRep)) {
@@ -59,9 +53,21 @@ function validations(array $arr): array
     } else {
         $errors ['password-repeat'] = "поле 'Repeat Password' должно быть заполнено";
     }
+
+    $email = $arr["email"];
+    $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt->execute(['email' => $email]);
+    $userdata = $stmt->fetch();
+    if ($userdata !== false) {
+        $errors["email"] = 'такой email уже зарегистрирован';
+    }
+
     return $errors;
+
 }
-$errors = validations($_POST);
+
+$errors = validate($_POST);
 
 if (empty($errors)) {
     $name = $_POST["name"];
@@ -73,7 +79,6 @@ if (empty($errors)) {
     $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
     $stmt->execute(['email' => $email]);
-
     print_r($stmt->fetch());
 } else {
     require_once './get_registration.php';

@@ -44,7 +44,7 @@
     /* Add padding to containers */
     .container {
         padding: 16px;
-        background-image: url("white.jpg");
+        background-image: url("images/white.jpg");
         background-repeat: no-repeat;
         background-position: center center;
         background-size: cover;
