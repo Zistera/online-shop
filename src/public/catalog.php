@@ -1,10 +1,10 @@
 <?php
-if (!isset($_COOKIE['user_id'])) {
-    header('Location: /get_login.php');
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ./login');
 }
 $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
-$stmt = $pdo->prepare("SELECT * FROM products");
-$stmt->execute();
+$stmt = $pdo->query("SELECT * FROM products");
 $products = $stmt->fetchall();
 ?>
 
@@ -22,7 +22,7 @@ $products = $stmt->fetchall();
                     <p class="card-text text-muted"><?php print_r($product['name']);?></p>
                     <a href="#"><h5 class="card-title"><?php print_r($product['description']);?></h5></a>
                     <div class="card-footer">
-                        <?php print_r($product['price']);?>
+                        <?php print_r("{$product['price']} рублей");?>
                     </div>
                 </div>
             </a>

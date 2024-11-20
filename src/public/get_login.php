@@ -3,7 +3,7 @@
 <body>
 <div class="container">
     <div class="wrapper">
-        <form action="handle_login.php" METHOD="POST">
+        <form action="login" METHOD="POST">
             <h1>Login</h1>
             <div class="input-box">
                 <label style="color: red">
@@ -28,7 +28,7 @@
             <div class="register-link">
                 <a href="#">Forget password?</a></div>
             <div class="register-link">
-                <p>Don't have an account? <a href="get_registration.php">Register</a></p>
+                <p>Don't have an account? <a href="register">Register</a></p>
             </div>
         </form>
     </div>

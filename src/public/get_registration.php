@@ -1,4 +1,4 @@
-<form action="handle_registration.php" method="POST">
+<form action="register" method="POST">
     <div class="container">
         <h1>Register</h1>
         <p>Please fill in this form to create an account.</p>
@@ -34,7 +34,7 @@
     </div>
 
     <div class="container signin">
-        <p>Already have an account? <a href="get_login.php">Sign in</a>.</p>
+        <p>Already have an account? <a href="login">Sign in</a>.</p>
     </div>
 </form>
 

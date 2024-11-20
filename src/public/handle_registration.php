@@ -18,6 +18,7 @@ function validate(array $arr): array
     }
 
     if (isset($arr["email"])) {
+        $email = $arr["email"];
         if (empty($email)) {
             $errors["email"] = 'email не может быть пустым';
         } elseif (strpos($email, "@") === false){
@@ -44,7 +45,8 @@ function validate(array $arr): array
     }
 
     if (isset($arr['password-repeat'])) {
-        $PasswordRepeat = $arr["password-repeat"];
+        $password = $arr["password"];
+        $PasRep = $arr["password-repeat"];
         if (empty($PasRep)) {
             $errors['password-repeat'] = 'пароль не может быть пустым';
         } elseif ($PasRep !== $password) {
@@ -78,8 +80,8 @@ if (empty($errors)) {
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-    $stmt->execute(['email' => $email]);
-    print_r($stmt->fetch());
+    header('Location: ./login');
+
 } else {
     require_once './get_registration.php';
 }

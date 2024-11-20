@@ -1,5 +1,5 @@
 <?php
-function validations(array $arr)
+function validate(array $arr)
 {
     $errors = [];
     if (isset($arr["email"])) {
@@ -20,7 +20,7 @@ function validations(array $arr)
     }
     return $errors;
 }
-$errors = validations($_POST);
+$errors = validate($_POST);
 
 if (empty($errors)) {
     $email = $_POST["email"];
@@ -36,8 +36,9 @@ if (empty($errors)) {
     } else {
 
         if (password_verify($pass, $userdata["password"])) {
-            setcookie('user_id', $userdata['id']);
-            header('Location: ./catalog.php');
+            session_start();
+            $_SESSION['user_id'] = $userdata['id'];
+            header('Location: ./catalog');
         } else {
             $errors["email"] = 'Логин или пароль не совпадает';
             require_once './get_login.php';
