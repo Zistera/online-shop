@@ -38,7 +38,7 @@ if (empty($errors)) {
         if (password_verify($pass, $userdata["password"])) {
             session_start();
             $_SESSION['user_id'] = $userdata['id'];
-            header('Location: ./catalog');
+            header('Location: /catalog');
         } else {
             $errors["email"] = 'Логин или пароль не совпадает';
             require_once './get_login.php';

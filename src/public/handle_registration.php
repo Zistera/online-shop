@@ -25,6 +25,14 @@ function validate(array $arr): array
             $errors["email"] = 'в email должен быть знак @';
         } elseif (strlen($email)<2 || strlen($email)>20) {
             $errors["email"] = 'email не может иметь меньше 2 символов или больше 20';
+        }else {
+            $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+            $stmt->execute(['email' => $email]);
+            $userdata = $stmt->fetch();
+            if ($userdata !== false) {
+                $errors["email"] = 'такой email уже зарегистрирован';
+            }
         }
     }else {
         $errors ["email"] = "поле 'email' должно быть заполнено";
@@ -56,15 +64,6 @@ function validate(array $arr): array
         $errors ['password-repeat'] = "поле 'Repeat Password' должно быть заполнено";
     }
 
-    $email = $arr["email"];
-    $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-    $stmt->execute(['email' => $email]);
-    $userdata = $stmt->fetch();
-    if ($userdata !== false) {
-        $errors["email"] = 'такой email уже зарегистрирован';
-    }
-
     return $errors;
 
 }
@@ -79,8 +78,7 @@ if (empty($errors)) {
     $stmt = $pdo->prepare("INSERT INTO users(name, email, password) VALUES (:name, :email, :password)");
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-    header('Location: ./login');
+    header('Location: /login');
 
 } else {
     require_once './get_registration.php';
