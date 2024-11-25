@@ -1,20 +1,34 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+header('Location: /login');
+}
+?>
 <form action="add-product" method="POST">
     <div class="container">
+        <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal"
+                data-target="#staticBackdrop">
+            <i class="fas fa-shopping-cart marginright total-count"></i>
+            <a class="navbar-brand" href="logout"><strong>Logout </strong></a>
+        </button>
         <h1>Добавление продукта в корзину</h1>
         <hr>
         <label for="name"><b>ID товара</b></label>
         <label style="color: red">
-            <?php if (!empty($errors["name"])){
-                print_r($errors["name"]);} ?> </label>
+            <?php if (!empty($errors["product_id"])){
+                print_r($errors["product_id"]);} ?> </label>
         <input type="text" placeholder="ID товара" name="product_id" id="product_id" required>
 
         <label for="email"><b>Количество</b></label>
         <label style="color: red">
-            <?php if (!empty($errors["email"])){
-                print_r($errors["email"]);} ?> </label>
+            <?php if (!empty($errors["amount"])){
+                print_r($errors["amount"]);} ?> </label>
         <input type="text" placeholder="Количество" name="amount" id="amount" required>
 
         <button type="submit" class="registerbtn">Добавить</button>
+    </div>
+    <div class="container signin">
+        <p><a href="catalog">Вернуться в каталог</a>.</p>
     </div>
 
 </form>
@@ -25,7 +39,7 @@
     /* Add padding to containers */
     .container {
         padding: 16px;
-        background-image: url("images/white.jpg");
+        background-image: url("https://gendalf.ru/upload/iblock/35f/uxg3gjajy17fz81u4f7ds0t1rh3x9zvs/shablon-desktop-bitriks-kopiya-_1_.webp");
         background-repeat: no-repeat;
         background-position: center center;
         background-size: cover;

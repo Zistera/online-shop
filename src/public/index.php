@@ -34,8 +34,21 @@ if ($requestURI === '/login') {
     } else {
         print_r("$requestMethod не поддерживается адресом $requestURI\n");
     }
-}
-else {
+} elseif ($requestURI === '/cart') {
+    if ($requestMethod === 'GET') {
+        require_once './cart_button.php';
+    } else {
+        print_r("$requestMethod не поддерживается адресом $requestURI\n");
+    }
+} elseif ($requestURI === '/logout') {
+    if ($requestMethod === 'GET') {
+        require_once './logout.php';
+    } else {
+        print_r("$requestMethod не поддерживается адресом $requestURI\n");
+    }
+}else {
         http_response_code(404);
         require_once './404.php';
     }
+
+

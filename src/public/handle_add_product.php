@@ -1,89 +1,66 @@
 <?php
 session_start();
-$userdata = $_SESSION['user_id'];
-$product_id = $_POST['product_id'];
-$amount = $_POST['amount'];
-//добавить валидацию
-
-$pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
-$stmt = $pdo->prepare("INSERT INTO user_products(user_id, product_id, amount) VALUES (:user_id, :product_id, :amount)");
-$stmt->execute(['user_id' => $userdata, 'product_id' => $product_id, 'amount' => $amount]);
-
-$stmt = $pdo->prepare("SELECT * FROM products WHERE $product_id = :id ");
-$stmt->execute(['id' => $product_id]);
-$products = $stmt->fetchAll();
-
-$total = 0;
-?>
-<div class="container">
-    <h3>Ваша корзина</h3>
-    <div class="card-deck">
-        <?php foreach ($products as $product) : ?>
-        <div class="card text-center">
-            <a href="#">
-                <div class="card-header">
-                </div>
-                <img class="card-img-top" src="<?php echo $product['pngadress'];?>" alt="Card image">
-                <div class="card-body">
-                    <p class="card-text text-muted"><?php print_r($product['name']);?></p>
-                    <a href="#"><h5 class="card-title"><?php print_r($product['description']);?></h5></a>
-                    <div class="card-footer">
-                        <?php print_r("{$product['price']} рублей");?>
-                    </div>
-                    <div class="card-footer">
-                        <?php print_r("в количестве {$amount} = ".($product['price'])*$amount." рублей");
-                        $total = $total + (($product['price'])*$amount)?>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <?php endforeach; ?>
-    </div>
-</div>
-<div class="card-footer">
-    <?php print_r("итого: ".$total." рублей");?>
-</div>
-
-
-<style>
-    body {
-        font-style: italic;
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /login');
+}
+function validate($user_id, $arr)
+{
+    $product_id = $arr['product_id'];
+    $errors = [];
+    if (!isset($user_id)) {
+        header('Location: /login');
     }
 
-    a {
-        text-decoration: none;
+    if (!isset($product_id)) {
+        $errors ['product_id'] = 'поле product_id должно быть заполнено';
+    } elseif (!is_numeric($arr['product_id'])){
+        $errors ['product_id'] = 'product_id не может содержать буквы';
+    }
+    else {
+        $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
+        $stmt = $pdo->query("SELECT * FROM products WHERE id = $product_id");
+        $all= $stmt->fetchall();
+        if ($all == false) {
+            $errors["product_id"] = 'товара с таким id не существует';
+        }
     }
 
-    a:hover {
-        text-decoration: none;
+    if (!isset($arr['amount'])) {
+        $errors ['amount'] = 'поле amount должно быть заполнено';
+    } elseif (!is_numeric($arr['amount'])) {
+        $errors ['amount'] = 'количиство не может содержать буквы';
+    } elseif ($arr['amount'] < 0){
+        $errors ['amount'] = 'количиство не может быть отрицательным';
     }
 
-    h3 {
-        line-height: 3em;
+    return $errors;
+}
+$errors = validate($_SESSION['user_id'], $_POST);
+
+if (empty($errors)) {
+    $userdata = $_SESSION['user_id'];
+    $product_id = $_POST['product_id'];
+    $amount = $_POST['amount'];
+
+    $pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
+    $stmt = $pdo->query("SELECT product_id, amount FROM  user_products WHERE product_id = $product_id AND user_id = $userdata");
+    $all = $stmt->fetch();
+
+    if (!empty($all['product_id']) != $product_id) {
+        $stmt = $pdo->prepare("INSERT INTO user_products (user_id, product_id, amount) VALUES (:user_id, :product_id, :amount)");
+        $stmt->execute(['user_id' => $userdata, 'product_id' => $product_id, 'amount' => $amount]);
     }
 
-    .card {
-        max-width: 20rem;
+    else {
+        $stmt = $pdo->query("UPDATE user_products SET amount=amount+$amount WHERE product_id= $product_id AND user_id= $userdata");
+        //$stmt->execute(['amount' => $amount]);
     }
 
-    .card:hover {
-        box-shadow: 100px 2px 100px yellow;
-        transition: 0.2s;
-    }
 
-    .card-header {
-        font-size: 20px;
-        color: red;
-        background-color: blue;
-    }
+    $out = "Товар с id №{$product_id} был добавлен в вашу корзину в количестве {$amount}";
+    require_once 'catalog.php';
 
-    .text-muted {
-        font-size: 20px;
-    }
+} else {
+    require_once 'get_add_product.php';
+}
 
-    .card-footer{
-        font-weight: bold;
-        font-size: 20px;
-        background-color: white;
-    }
-</style>
