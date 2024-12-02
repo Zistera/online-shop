@@ -1,54 +1,73 @@
 <?php
+require_once './../controller/UserController.php';
+$userController = new UserController();
+
+require_once './../controller/ProductController.php';
+$productController = new ProductController();
+
+require_once './../controller/CartController.php';
+$cartController = new CartController();
+
+session_start();
+
 $requestURI = $_SERVER['REQUEST_URI'];
 $requestMethod = $_SERVER['REQUEST_METHOD'];
+
 if ($requestURI === '/login') {
     if ($requestMethod === 'GET') {
-        require_once './get_login.php';
+        $userController->getLoginForm();
     } elseif ($requestMethod === 'POST') {
-        require_once './handle_login.php';
+        $userController->login();
     } else {
         print_r("$requestMethod не поддерживается адресом $requestURI\n");
     }
 
 } elseif ($requestURI === '/register') {
     if ($requestMethod === 'GET') {
-        require_once './get_registration.php';
+        $userController->getRegistrationForm();
     } elseif ($requestMethod === 'POST') {
-        require_once './handle_registration.php';
+        $userController->registrate();
     } else {
         print_r("$requestMethod не поддерживается адресом $requestURI\n");
     }
 
 } elseif ($requestURI === '/catalog') {
     if ($requestMethod === 'GET') {
-        require_once './catalog.php';
+        $productController->getCatalog();
     } else {
         print_r("$requestMethod не поддерживается адресом $requestURI\n");
     }
 
 }   elseif ($requestURI === '/add-product') {
     if ($requestMethod === 'GET') {
-    require_once './get_add_product.php';
+    $cartController->getAddToCartForm();
     } elseif ($requestMethod === 'POST') {
-        require_once './handle_add_product.php';
+        $cartController->addToCart();
     } else {
         print_r("$requestMethod не поддерживается адресом $requestURI\n");
     }
+
+
+
 } elseif ($requestURI === '/cart') {
     if ($requestMethod === 'GET') {
-        require_once './cart_button.php';
+        $cartController->getCartForm();
     } else {
         print_r("$requestMethod не поддерживается адресом $requestURI\n");
     }
+
+
+
+
 } elseif ($requestURI === '/logout') {
     if ($requestMethod === 'GET') {
-        require_once './logout.php';
+        $userController->logout();
     } else {
         print_r("$requestMethod не поддерживается адресом $requestURI\n");
     }
 }else {
         http_response_code(404);
-        require_once './404.php';
+        require_once './../view/404.php';
     }
 
 
