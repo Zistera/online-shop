@@ -20,7 +20,7 @@
         <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal"
                 data-target="#staticBackdrop">
             <i class="fas fa-shopping-cart marginright total-count"></i>
-            <a class="navbar-brand" href="cart"><strong>Корзина</strong></a>
+            <a class="navbar-brand" href="order"><strong>Завершить покупку</strong></a>
         </button>
 
         </div>
@@ -33,6 +33,7 @@
     <h3>Ваша корзина</h3>
     <div class="card-deck">
         <?php
+        if (!empty($products)) {
             foreach ($products as $product) : ?>
                 <div class="card text-center">
                     <a href="#">
@@ -56,7 +57,7 @@
     </div>
 </div>
 <div class="card-footer">
-    <?php print_r("итого: ".$total." рублей");?>
+    <?php print_r("итого: ".$total." рублей");}?>
 </div>
 
 

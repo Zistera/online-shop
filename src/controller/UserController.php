@@ -1,11 +1,12 @@
 <?php
+require_once './../model/User.php';
 class UserController
 {
     public function getRegistrationForm()
     {
         require_once './../view/registrateform.php';
     }
-    public function registrate()
+    public function postRegistrationForm()
     {
         $errors = $this->validateReg($_POST);
 
@@ -14,9 +15,8 @@ class UserController
             $email = $_POST["email"];
             $password = $_POST["password"];
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            require_once './../model/users.php';
             $users = new user ();
-            $users->create($name, $email, $hash);
+            $users->createUserdata($name, $email, $hash);
             header('Location: /login');
 
         } else {
@@ -50,9 +50,8 @@ class UserController
             } elseif (strlen($email)<2 || strlen($email)>20) {
                 $errors["email"] = 'email не может иметь меньше 2 символов или больше 20';
             }else {
-                require_once './../model/users.php';
                 $users = new user ();
-                $userdata = $users->select($email);
+                $userdata = $users->selectByEmail($email);
                 if ($userdata !== false) {
                     $errors["email"] = 'такой email уже зарегистрирован';
                 }
@@ -95,24 +94,24 @@ class UserController
     {
         require_once './../view/login.php';
     }
-    public function login()
+    public function postLoginForm()
     {
         $errors = $this->validateLog($_POST);
 
         if (empty($errors)) {
             $email = $_POST["email"];
             $pass = $_POST["password"];
-            require_once './../model/users.php';
+            require_once './../model/User.php';
             $users = new user ();
-            $userdata = $users->select($email);
+            $user = $users->selectByEmail($email);
 
-            if ($userdata == false) {
+            if ($user == false) {
                 $errors['email'] = "Логин или пароль не совпадает";
                 require_once './../view/login.php';
             } else {
 
-                if (password_verify($pass, $userdata["password"])) {
-                    $_SESSION['user_id'] = $userdata['id'];
+                if (password_verify($pass, $user["password"])) {
+                    $_SESSION['user_id'] = $user['id'];
                     header('Location: /catalog');
                 } else {
                     $errors["email"] = 'Логин или пароль не совпадает';

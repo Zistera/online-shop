@@ -2,9 +2,6 @@
 if (!isset($_SESSION['user_id'])) {
     header('Location: /login');
 }
-$pdo = new PDO('pgsql:host=postgres_db;port=5432;dbname=mydb', 'user', 'pass');
-$stmt = $pdo->query("SELECT * FROM products");
-$products = $stmt->fetchall();
 ?>
 <!DOCTYPE html>
 <html lang="en" >
@@ -18,7 +15,7 @@ $products = $stmt->fetchall();
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
         <a class="navbar-brand" href="add-product"><strong>Add product</strong></a>
         <label class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto"<strong><label style="color: red"><?php if (!empty($out)) {echo "$out";} ?></strong></label>
+            <ul class="navbar-nav mr-auto"<strong><label style="color: red"></strong></label>
             </ul>
         <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal"
                 data-target="#staticBackdrop">

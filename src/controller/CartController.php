@@ -1,95 +1,98 @@
 <?php
 class CartController
 {
-    public function getCartForm()
+    public function getFormForCart()
     {
         if (!isset($_SESSION['user_id'])) {
             header('Location: /login');
-        }else {
-            $userdata = $_SESSION['user_id'];
         }
+        $userId = $_SESSION['user_id'];
 
-        require_once "./../model/user_products.php";
-        require_once "./../model/products.php";
 
-        $cart = new user_products();
-        $prod = new products();
-        $carts = $cart->selectAllById($userdata);
+        require_once "./../model/UserProduct.php";
+        require_once "./../model/Product.php";
 
-        $product_id = [];
-        $products = [];
+        $userProducts = new UserProduct();
+        $product = new Product();
+        $userProducts = $userProducts->selectAllByUserId($userId);
+        if (empty($userProducts)) {
+            require_once './../view/cart.php';
+        } else {
+            foreach ($userProducts as $userProduct) {
+                $productIds [] = $userProduct['product_id'];
 
-        $i = 0;
-        foreach ($carts as $value) {
-            $product_id [$i]= $value['product_id'];
-            $i++;
+            }
+
+            $products = $product->getAllByIds($productIds);
+
+
+            foreach ($userProducts as $userProduct) {
+                foreach ($products as &$product) {
+                    if ($product['id'] === $userProduct['product_id']) {
+                        $product['amount'] = $userProduct['amount'];
+                    }
+                }
+                unset($product);
+            }
+
+            $total = 0;
+            require_once './../view/cart.php';
         }
-
-        $place_holders = '?' . str_repeat(', ?', count($product_id) - 1);
-        $products_cart = $prod->getAllProductInCart($place_holders, $product_id);
-
-        $i = 0;
-        foreach ($carts as $value) {
-            $products [$i] = $products_cart[$i];
-            $products [$i]['amount'] = $value['amount'];
-            $i++;
-        }
-        $total = 0;
-        require_once './../view/cart.php';
     }
 
-    public function getAddToCartForm()
+    public function getFormAddProductInCart()
     {
     require_once './../view/add_product.php';
     }
 
-    public function addToCart()
+    public function addProductInCart()
     {
         $errors = $this->validateAddProduct($_SESSION['user_id'], $_POST);
 
         if (empty($errors)) {
-            $userdata = $_SESSION['user_id'];
-            $product_id = $_POST['product_id'];
+            $userId = $_SESSION['user_id'];
+            $productId = $_POST['product_id'];
             $amount = $_POST['amount'];
-            require_once './../model/user_products.php';
-            $user_products = new user_products();
-            $all = $user_products->selectOneByUseridAndProductId($product_id, $userdata);
+            require_once './../model/UserProduct.php';
+            $user_products = new UserProduct();
+            $all = $user_products->selectOneByUseridAndProductId($productId, $userId);
 
-            if (!empty($all['product_id']) != $product_id) {
-                $user_products->addToCart($userdata, $product_id, $amount);
+            if (!empty($all['product_id']) != $productId) {
+                $user_products->addToCart($userId, $productId, $amount);
             }
 
             else {
-                $user_products->updateToCart($userdata, $product_id, $amount);
+                $user_products->updateToCart($userId, $productId, $amount);
             }
 
-
-            $out = "Товар с id №{$product_id} был добавлен в вашу корзину в количестве {$amount}";
-            require_once './../view/catalog.php';
+            require_once './../model/Product.php';
+            $product = new Product();
+            $products = $product->getProductsForFormOfCatalog();
+            require_once "./../view/catalog.php";
 
         } else {
             require_once './../view/add_product.php';
         }
     }
-    private function validateAddProduct(int $user_id, array $arr) : array
+    private function validateAddProduct(int $userId, array $arr) : array
     {
-        $product_id = $arr['product_id'];
+        $productId = $arr['product_id'];
         $errors = [];
-        require_once './../model/user_products.php';
-        require_once './../model/products.php';
-        if (!isset($user_id)) {
+        require_once './../model/UserProduct.php';
+        require_once './../model/Product.php';
+        if (!isset($userId)) {
             header('Location: /login');
         }
 
-        if (!isset($product_id)) {
+        if (!isset($productId)) {
             $errors ['product_id'] = 'поле product_id должно быть заполнено';
         } elseif (!is_numeric($arr['product_id'])){
             $errors ['product_id'] = 'product_id не может содержать буквы';
         }
         else {
-            $products = new products();
-            $all= $products->getById($product_id);;
-            if ($all == false) {
+            $products = new Product();
+            $watch= $products->getById($productId);
+            if ($watch == false) {
                 $errors["product_id"] = 'товара с таким id не существует';
             }
         }
